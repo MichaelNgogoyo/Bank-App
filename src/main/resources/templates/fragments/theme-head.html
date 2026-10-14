@@ -1,0 +1,19 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="themeHead(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">Equity Bank</title>
+    <script>
+        (function () {
+            const key = 'equity-theme';
+            const stored = localStorage.getItem(key);
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = stored === 'light' || stored === 'dark' ? stored : (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.style.colorScheme = theme;
+        }());
+    </script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/equity-theme.css}">
+    <script th:src="@{/js/equity-theme.js}" defer></script>
+</th:block>

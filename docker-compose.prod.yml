@@ -1,0 +1,44 @@
+services:
+  app:
+    image: ${IMAGE_NAME}:${IMAGE_TAG}
+    container_name: bank-app
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configtree:/run/secrets/
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+    secrets:
+      - spring.datasource.url
+      - spring.datasource.username
+      - spring.datasource.password
+
+  caddy:
+    image: caddy:2
+    container_name: bank-caddy
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+secrets:
+  spring.datasource.url:
+    file: ./secrets/spring.datasource.url
+  spring.datasource.username:
+    file: ./secrets/spring.datasource.username
+  spring.datasource.password:
+    file: ./secrets/spring.datasource.password
+
+volumes:
+  caddy_data:
+  caddy_config:
