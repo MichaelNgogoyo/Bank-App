@@ -1,94 +1,140 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Transaction History - Goldencat Bank</title>
+    <title>Transaction History - Equity Bank</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --equity-green: #006a4e;
+            --equity-green-dark: #004d39;
+            --equity-red: #d72638;
+            --surface: rgba(255, 255, 255, 0.92);
+            --text: #10312b;
+            --border: rgba(0, 106, 78, 0.14);
+            --shadow: 0 24px 50px rgba(16, 49, 43, 0.16);
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #000000, #ffd700);
-            color: #ffffff;
+            font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            flex-direction: column;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(215, 38, 56, 0.14), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(0, 106, 78, 0.18), transparent 34%),
+                linear-gradient(135deg, #eef7f3 0%, #ffffff 52%, #f4fbf8 100%);
         }
 
         .navbar-custom {
-            background-color: rgba(0, 0, 0, 0.7);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
+            background: linear-gradient(90deg, var(--equity-green-dark), var(--equity-green));
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
         }
 
+        .navbar-custom .navbar-brand,
         .navbar-custom a {
             color: #ffffff !important;
         }
 
         .navbar-custom .navbar-brand {
-            font-weight: bold;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        .container {
-            max-width: 1000px;
-            margin-top: 80px; /* Reduced margin for the table to be closer to the top */
-            text-align: center;
+        .navbar-custom .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 600;
         }
 
-        h2 {
-            margin-bottom: 20px;
+        .navbar-custom .nav-link:hover {
+            color: #ffffff !important;
+        }
+
+        .transactions-shell {
+            width: 100%;
+            padding: 96px 16px 72px;
+        }
+
+        .transactions-container {
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        .page-card {
+            padding: 28px;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+        }
+
+        .page-card h2 {
+            color: var(--equity-green-dark);
+            font-weight: 800;
+            margin-bottom: 22px;
         }
 
         .table-custom {
-            background-color: rgba(0, 0, 0, 0.8); /* Darker background for better contrast */
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-            overflow-x: auto; /* Ensures table is responsive */
+            overflow-x: auto;
+            border-radius: 18px;
+            border: 1px solid rgba(0, 106, 78, 0.12);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, var(--equity-green-dark), var(--equity-green));
+            color: #ffffff;
+            border: none;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .table td,
+        .table th {
+            padding: 16px 18px;
+            border-top: 1px solid rgba(0, 106, 78, 0.1);
+            vertical-align: middle;
         }
 
         .table-striped tbody tr:nth-of-type(odd) {
-            background-color: rgba(255, 255, 255, 0.1); /* Slightly lighter row color */
+            background-color: rgba(0, 106, 78, 0.03);
         }
 
-        .table-striped td, .table-striped th {
-            color: #ffffff; /* White text color for visibility */
-            font-weight: bold; /* Bolder text for readability */
-            padding: 15px; /* Increase padding for better spacing */
-            border-bottom: 1px solid #ffd700; /* Yellow border for rows */
-        }
-
-        .table-striped th {
-            background-color: rgba(255, 215, 0, 0.2); /* Light golden background for headers */
+        .table-striped tbody tr:hover {
+            background-color: rgba(215, 38, 56, 0.05);
         }
 
         .text-success {
-            color: #28a745 !important;
+            color: var(--equity-green) !important;
+            font-weight: 700;
         }
 
         .text-danger {
-            color: #dc3545 !important;
+            color: var(--equity-red) !important;
+            font-weight: 700;
         }
 
         .custom-link {
-            color: #ffd700;
+            color: var(--equity-green);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         .custom-link:hover {
-            color: #ffecb3;
+            color: var(--equity-red);
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-custom">
-    <a class="navbar-brand" href="#">Goldencat Bank</a>
+    <a class="navbar-brand" href="#">Equity Bank</a>
     <ul class="navbar-nav ml-auto">
         <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link" href="/transactions">Transactions</a></li>
@@ -96,33 +142,37 @@
     </ul>
 </nav>
 
-<div class="container">
-    <h2 class="text-center">Transaction History</h2>
-    <div class="table-responsive table-custom">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Date</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="transaction : ${transactions}">
-                <td th:text="${transaction.id}"></td>
-                <td th:text="${transaction.type}"></td>
-                <td th:text="${transaction.amount}"
-                    th:classappend="${transaction.type.contains('Transfer In') || transaction.type == 'Deposit'} ? 'text-success' : 'text-danger'">
-                    <span th:text="${transaction.type.contains('Transfer In') || transaction.type == 'Deposit'} ? '+$' + transaction.amount : '-$' + transaction.amount"></span>
-                </td>
-                <td th:text="${transaction.timeStamp}"></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+<div class="transactions-shell">
+    <div class="transactions-container">
+        <div class="page-card">
+            <h2 class="text-center">Transaction History</h2>
+            <div class="table-responsive table-custom">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="transaction : ${transactions}">
+                        <td th:text="${transaction.id}"></td>
+                        <td th:text="${transaction.type}"></td>
+                        <td th:text="${transaction.amount}"
+                            th:classappend="${transaction.type.contains('Transfer In') || transaction.type == 'Deposit'} ? 'text-success' : 'text-danger'">
+                            <span th:text="${transaction.type.contains('Transfer In') || transaction.type == 'Deposit'} ? '+$' + transaction.amount : '-$' + transaction.amount"></span>
+                        </td>
+                        <td th:text="${transaction.timeStamp}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    <p class="text-center"><a href="/dashboard" class="custom-link">Back to Dashboard</a></p>
+            <p class="text-center mt-4 mb-0"><a href="/dashboard" class="custom-link">Back to Dashboard</a></p>
+        </div>
+    </div>
 </div>
 
 </body>

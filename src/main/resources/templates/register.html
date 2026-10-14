@@ -1,155 +1,221 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Register - Goldencat Bank</title>
+    <title>Register - Equity Bank</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
+        :root {
+            --equity-green: #006a4e;
+            --equity-green-dark: #004d39;
+            --equity-red: #d72638;
+            --equity-red-soft: #fbe4e7;
+            --surface: rgba(255, 255, 255, 0.92);
+            --text: #10312b;
+            --border: rgba(0, 106, 78, 0.14);
+            --shadow: 0 24px 50px rgba(16, 49, 43, 0.16);
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #000000, #ffd700);
-            color: #ffffff;
+            font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(215, 38, 56, 0.14), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(0, 106, 78, 0.18), transparent 34%),
+                linear-gradient(135deg, #eef7f3 0%, #ffffff 52%, #f4fbf8 100%);
         }
 
         .navbar-custom {
-            background-color: rgba(0, 0, 0, 0.7);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
+            background: linear-gradient(90deg, var(--equity-green-dark), var(--equity-green));
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
         }
 
+        .navbar-custom .navbar-brand,
         .navbar-custom a {
             color: #ffffff !important;
         }
 
         .navbar-custom .navbar-brand {
-            font-weight: bold;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .navbar-custom .social-icons a {
-            color: #ffffff;
-            margin-left: 15px;
-            font-size: 1.2rem;
-            transition: color 0.3s ease;
+            color: rgba(255, 255, 255, 0.9);
+            margin-left: 14px;
+            font-size: 1.05rem;
+            transition: transform 0.2s ease, color 0.2s ease;
         }
 
         .navbar-custom .social-icons a:hover {
-            color: #ffd700;
-        }
-
-        .container {
-            max-width: 450px;
-            padding: 30px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            position: relative;
-            text-align: center;
-        }
-
-        .container h2 {
             color: #ffffff;
-            margin-bottom: 20px;
+            transform: translateY(-1px);
+        }
+
+        .auth-shell {
+            min-height: calc(100vh - 72px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 16px 72px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 460px;
+            padding: 34px;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+        }
+
+        .auth-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--equity-red-soft);
+            color: var(--equity-red);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .auth-title {
+            margin: 16px 0 8px;
+            font-weight: 800;
+            color: var(--equity-green-dark);
+        }
+
+        .auth-subtitle {
+            margin-bottom: 26px;
+            color: rgba(16, 49, 43, 0.75);
         }
 
         .form-group label {
-            color: #dddddd;
-            text-align: left;
-            display: block;
+            color: var(--equity-green-dark);
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
-        .form-group input {
-            border: 1px solid #ffd700;
-            background-color: #333;
-            color: #ffffff;
+        .form-control {
+            min-height: 48px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 106, 78, 0.18);
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text);
+            box-shadow: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--equity-green);
+            box-shadow: 0 0 0 0.2rem rgba(0, 106, 78, 0.14);
         }
 
         .btn {
-            background-color: #ffd700;
-            border: none;
-            color: black;
-            transition: background-color 0.3s ease;
+            min-height: 48px;
+            border-radius: 12px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
         }
 
-        .btn:hover {
-            background-color: #ffc700;
+        .btn-primary {
+            background: linear-gradient(135deg, var(--equity-red), #b81828);
+            border: none;
+            box-shadow: 0 12px 22px rgba(215, 38, 56, 0.22);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #c51f31, #a91423);
         }
 
         .custom-link {
-            color: #ffd700;
+            color: var(--equity-green);
+            font-weight: 700;
             text-decoration: none;
-            font-weight: bold;
         }
 
         .custom-link:hover {
-            color: #ffecb3;
+            color: var(--equity-red);
             text-decoration: underline;
         }
 
-        .footer {
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px 0;
-            font-size: 14px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        .alert-danger {
+            border: none;
+            background: rgba(215, 38, 56, 0.1);
+            color: #a11423;
+            border-radius: 12px;
         }
 
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-            100% { transform: translateX(0); }
+        .footer {
+            background: rgba(255, 255, 255, 0.8);
+            border-top: 1px solid rgba(0, 106, 78, 0.12);
+            color: rgba(16, 49, 43, 0.8);
+            padding: 14px 0;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: var(--equity-green);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer a:hover {
+            color: var(--equity-red);
         }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-custom">
-    <a class="navbar-brand" href="#">Goldencat Bank</a>
+    <a class="navbar-brand" href="#">Equity Bank</a>
     <div class="ml-auto social-icons">
-        <a href="https://www.youtube.com" target="_blank" title="YouTube">
+        <a href="#" title="YouTube">
             <i class="fab fa-youtube"></i>
         </a>
-        <a href="https://www.linkedin.com" target="_blank" title="LinkedIn">
+        <a href="#" title="LinkedIn">
             <i class="fab fa-linkedin"></i>
         </a>
     </div>
 </nav>
 
-<div class="container">
-    <h2 class="text-center">Register a New Account</h2>
-    <form method="post" action="/register">
-        <div class="form-group">
-            <label>Username:</label>
-            <input type="text" class="form-control" name="username" required />
-        </div>
-        <div class="form-group">
-            <label>Password:</label>
-            <input type="password" class="form-control" name="password" required />
-        </div>
-        <button type="submit" class="btn btn-block">Register</button>
-    </form>
-    <p class="text-center mt-3">Already have an account? <a href="/login" class="custom-link">Login here</a></p>
+<div class="auth-shell">
+    <div class="auth-card">
+        <span class="auth-badge"><i class="fas fa-user-plus"></i> New account</span>
+        <h2 class="auth-title text-center">Register a New Account</h2>
+        <p class="auth-subtitle text-center">Create an account in a polished Equity-inspired layout.</p>
 
-    <div th:if="${error}" class="alert alert-danger mt-3 text-center">
-        User already present.
+        <form method="post" action="/register">
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" class="form-control" name="username" required />
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" class="form-control" name="password" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </form>
+
+        <p class="text-center mt-3 mb-0">Already have an account? <a href="/login" class="custom-link">Login here</a></p>
+
+        <div th:if="${error}" class="alert alert-danger mt-3 text-center">
+            User already present.
+        </div>
     </div>
 </div>
 
-<!-- Footer -->
 <footer class="footer">
-    <p>&copy; 2024 Code With Goldencat. All rights reserved. | <a href="#" class="custom-link">Privacy Policy</a> | <a href="#" class="custom-link">Terms of Service</a></p>
+    <p class="mb-0">&copy; 2024 Equity Bank. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
 </footer>
 
 </body>
