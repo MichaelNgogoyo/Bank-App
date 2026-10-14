@@ -1,476 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Dashboard - Equity Bank</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        :root {
-            --equity-green: #006a4e;
-            --equity-green-dark: #004d39;
-            --equity-red: #d72638;
-            --equity-red-soft: #fbe4e7;
-            --surface: rgba(255, 255, 255, 0.92);
-            --text: #10312b;
-            --border: rgba(0, 106, 78, 0.14);
-            --shadow: 0 24px 50px rgba(16, 49, 43, 0.16);
-        }
-
-        * { box-sizing: border-box; }
-
-        body[data-theme="dark"] {
-            --surface: rgba(10, 18, 16, 0.88);
-            --equity-red-soft: rgba(215, 38, 56, 0.18);
-            --text: #e8f3ef;
-            --border: rgba(255, 255, 255, 0.1);
-            --shadow: 0 24px 50px rgba(0, 0, 0, 0.36);
-            background:
-                radial-gradient(circle at top left, rgba(215, 38, 56, 0.16), transparent 28%),
-                radial-gradient(circle at bottom right, rgba(0, 106, 78, 0.22), transparent 34%),
-                linear-gradient(135deg, #07110f 0%, #0d1a17 52%, #101f1c 100%);
-        }
-
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            min-height: 100vh;
-            color: var(--text);
-            background:
-                radial-gradient(circle at top left, rgba(215, 38, 56, 0.14), transparent 30%),
-                radial-gradient(circle at bottom right, rgba(0, 106, 78, 0.18), transparent 34%),
-                linear-gradient(135deg, #eef7f3 0%, #ffffff 52%, #f4fbf8 100%);
-        }
-
-        .navbar-custom {
-            background: linear-gradient(90deg, var(--equity-green-dark), var(--equity-green));
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .navbar-custom .navbar-brand,
-        .navbar-custom a {
-            color: #ffffff !important;
-        }
-
-        .navbar-custom .navbar-brand {
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .navbar-custom .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 600;
-        }
-
-        .navbar-custom .nav-link:hover {
-            color: #ffffff !important;
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .theme-toggle {
-            width: 42px;
-            height: 42px;
-            border-radius: 999px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            background: rgba(255, 255, 255, 0.14);
-            color: #ffffff;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.2s ease, background 0.2s ease;
-        }
-
-        .theme-toggle:hover {
-            transform: translateY(-1px);
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .dashboard-shell {
-            width: 100%;
-            padding: 96px 16px 96px;
-        }
-
-        .dashboard-container {
-            max-width: 1120px;
-            margin: 0 auto;
-        }
-
-        .hero-card,
-        .account-details,
-        .form-container {
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            background: var(--surface);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(12px);
-        }
-
-        .hero-card {
-            padding: 30px;
-            margin-bottom: 24px;
-            background: linear-gradient(135deg, rgba(0, 106, 78, 0.06), rgba(255, 255, 255, 0.96));
-        }
-
-        .hero-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.95fr);
-            gap: 22px;
-            align-items: center;
-        }
-
-        .hero-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 14px;
-            border-radius: 999px;
-            background: var(--equity-red-soft);
-            color: var(--equity-red);
-            font-size: 0.82rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        .hero-card h2 {
-            margin-top: 16px;
-            font-weight: 800;
-            color: var(--equity-green-dark);
-        }
-
-        .hero-card h3 {
-            margin-bottom: 0;
-            color: var(--equity-green);
-            font-weight: 700;
-        }
-
-        .hero-copy {
-            text-align: left;
-        }
-
-        .hero-summary {
-            margin-top: 16px;
-            color: rgba(16, 49, 43, 0.8);
-            line-height: 1.6;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-        }
-
-        .stat-card {
-            padding: 18px;
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.82);
-            border: 1px solid rgba(0, 106, 78, 0.12);
-            box-shadow: 0 12px 28px rgba(16, 49, 43, 0.08);
-        }
-
-        .stat-card.stat-accent {
-            background: linear-gradient(135deg, rgba(0, 106, 78, 0.1), rgba(255, 255, 255, 0.94));
-        }
-
-        .stat-label {
-            display: block;
-            color: rgba(16, 49, 43, 0.7);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        .stat-value {
-            display: block;
-            margin-top: 8px;
-            color: var(--equity-green-dark);
-            font-size: 1.06rem;
-            font-weight: 800;
-            word-break: break-word;
-        }
-
-        .stat-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            background: rgba(0, 106, 78, 0.12);
-            color: var(--equity-green);
-            margin-bottom: 10px;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 16px;
-            margin-top: 18px;
-        }
-
-        .feature-card {
-            padding: 18px;
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.86);
-            border: 1px solid rgba(0, 106, 78, 0.1);
-        }
-
-        .feature-card i {
-            color: var(--equity-red);
-            font-size: 1.15rem;
-            margin-bottom: 10px;
-        }
-
-        .feature-card h6 {
-            margin-bottom: 6px;
-            color: var(--equity-green-dark);
-            font-weight: 800;
-        }
-
-        .feature-card p {
-            margin-bottom: 0;
-            color: rgba(16, 49, 43, 0.72);
-            font-size: 0.92rem;
-        }
-
-        .account-details {
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-
-        .details-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-
-        .details-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            background: rgba(215, 38, 56, 0.1);
-            color: var(--equity-red);
-        }
-
-        .account-details h4,
-        .section-title {
-            color: var(--equity-green-dark);
-            font-weight: 800;
-        }
-
-        .btn {
-            min-height: 48px;
-            border-radius: 12px;
-            font-weight: 700;
-        }
-
-        .btn i {
-            margin-right: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--equity-green), #005641);
-            border: none;
-            box-shadow: 0 12px 22px rgba(0, 106, 78, 0.22);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #005641, #004735);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--equity-red), #b81828);
-            border: none;
-            box-shadow: 0 12px 22px rgba(215, 38, 56, 0.18);
-        }
-
-        .btn-success:hover {
-            background: linear-gradient(135deg, #c51f31, #a91423);
-        }
-
-        .form-container {
-            padding: 20px;
-            margin-top: 0;
-        }
-
-        .action-card {
-            height: 100%;
-        }
-
-        .action-card .action-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .action-card .action-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 46px;
-            height: 46px;
-            border-radius: 16px;
-            background: rgba(0, 106, 78, 0.1);
-            color: var(--equity-green);
-        }
-
-        .action-card .action-copy h5 {
-            margin: 0;
-            color: var(--equity-green-dark);
-            font-weight: 800;
-        }
-
-        .action-card .action-copy p {
-            margin: 4px 0 0;
-            color: rgba(16, 49, 43, 0.7);
-            font-size: 0.92rem;
-        }
-
-        .form-container .form-group label {
-            color: var(--equity-green-dark);
-            font-weight: 600;
-        }
-
-        .form-control {
-            min-height: 46px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 106, 78, 0.18);
-            box-shadow: none;
-        }
-
-        .form-control:focus {
-            border-color: var(--equity-green);
-            box-shadow: 0 0 0 0.2rem rgba(0, 106, 78, 0.14);
-        }
-
-        .error {
-            color: #a11423;
-            font-weight: 600;
-        }
-
-        .footer {
-            background: rgba(255, 255, 255, 0.8);
-            border-top: 1px solid rgba(0, 106, 78, 0.12);
-            color: rgba(16, 49, 43, 0.8);
-            padding: 14px 0;
-            font-size: 14px;
-            text-align: center;
-        }
-
-        .footer a {
-            color: var(--equity-green);
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        .footer a:hover {
-            color: var(--equity-red);
-        }
-
-        body[data-theme="dark"] .hero-card,
-        body[data-theme="dark"] .account-details,
-        body[data-theme="dark"] .form-container,
-        body[data-theme="dark"] .feature-card,
-        body[data-theme="dark"] .stat-card,
-        body[data-theme="dark"] .footer {
-            background: rgba(7, 17, 15, 0.88);
-        }
-
-        body[data-theme="dark"] .hero-card h2,
-        body[data-theme="dark"] .hero-card h3,
-        body[data-theme="dark"] .account-details h4,
-        body[data-theme="dark"] .section-title,
-        body[data-theme="dark"] .feature-card h6,
-        body[data-theme="dark"] .stat-value,
-        body[data-theme="dark"] .stat-label,
-        body[data-theme="dark"] .form-container .form-group label,
-        body[data-theme="dark"] .hero-copy,
-        body[data-theme="dark"] .hero-summary,
-        body[data-theme="dark"] .feature-card p,
-        body[data-theme="dark"] .action-card .action-copy p,
-        body[data-theme="dark"] .error,
-        body[data-theme="dark"] .account-details p,
-        body[data-theme="dark"] .footer {
-            color: #e8f3ef;
-        }
-
-        body[data-theme="dark"] .navbar-custom .nav-link,
-        body[data-theme="dark"] .navbar-custom .navbar-brand {
-            color: #ffffff !important;
-        }
-
-        body[data-theme="dark"] .form-control {
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text);
-            border-color: rgba(255, 255, 255, 0.14);
-        }
-
-        body[data-theme="dark"] .hero-eyebrow,
-        body[data-theme="dark"] .details-icon,
-        body[data-theme="dark"] .stat-icon,
-        body[data-theme="dark"] .action-icon {
-            background: rgba(255, 255, 255, 0.08);
-            color: #ffffff;
-        }
-
-        @media (max-width: 991.98px) {
-            .hero-grid,
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 575.98px) {
-            .dashboard-shell {
-                padding-top: 84px;
-            }
-
-            .hero-card,
-            .account-details {
-                padding: 20px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
+<head th:replace="fragments/theme-head :: themeHead('Dashboard - Equity Bank')"></head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-custom">
     <a class="navbar-brand" href="#">Equity Bank</a>
     <div class="ml-auto nav-actions">
-        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
-            <i class="fas fa-moon" id="themeIcon"></i>
+        <button type="button" class="theme-toggle" id="themeToggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+            <i class="fas fa-moon" id="themeIcon" data-theme-icon></i>
         </button>
         <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="/transactions">Transactions</a></li>
-        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/transactions">Transactions</a></li>
+            <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
         </ul>
     </div>
 </nav>
 
 <div class="dashboard-shell">
-    <div class="dashboard-container">
-        <div class="hero-card text-center">
+    <div class="container dashboard-container">
+        <div class="hero-card">
             <div class="hero-grid">
                 <div class="hero-copy">
                     <span class="hero-eyebrow"><i class="fas fa-university"></i> Personal banking</span>
                     <h2 th:text="'Welcome, ' + ${account.username}"></h2>
                     <h3 th:text="'Current Balance: $' + ${account.balance}"></h3>
-                    <p class="hero-summary mb-0">Manage deposits, withdrawals, and transfers from a cleaner modern dashboard inspired by Equity's brand colors.</p>
+                    <p class="hero-summary mb-0">Manage deposits, withdrawals, and transfers from a clean Equity-inspired dashboard.</p>
                 </div>
 
                 <div class="stats-grid">
@@ -528,82 +82,82 @@
         <div class="row justify-content-center">
             <div class="col-md-4 mb-4">
                 <div class="action-card form-container">
-                <div class="action-header">
-                    <span class="action-icon"><i class="fas fa-arrow-down"></i></span>
-                    <div class="action-copy">
-                        <h5>Deposit</h5>
-                        <p>Add funds instantly to your account.</p>
-                    </div>
-                </div>
-                <button class="btn btn-block btn-primary" type="button" data-toggle="collapse" data-target="#depositForm" aria-expanded="false" aria-controls="depositForm">
-                    <i class="fas fa-plus-circle"></i>Deposit
-                </button>
-                <div class="collapse mt-3" id="depositForm">
-                    <form method="post" action="/deposit" class="form-container">
-                        <div class="form-group">
-                            <label>Amount:</label>
-                            <input type="number" class="form-control" name="amount" required />
+                    <div class="action-header">
+                        <span class="action-icon"><i class="fas fa-arrow-down"></i></span>
+                        <div class="action-copy">
+                            <h5>Deposit</h5>
+                            <p>Add funds instantly to your account.</p>
                         </div>
-                        <button type="submit" class="btn btn-block btn-success"><i class="fas fa-check"></i>Submit</button>
-                    </form>
-                </div>
+                    </div>
+                    <button class="btn btn-block btn-primary" type="button" data-toggle="collapse" data-target="#depositForm" aria-expanded="false" aria-controls="depositForm">
+                        <i class="fas fa-plus-circle"></i>Deposit
+                    </button>
+                    <div class="collapse mt-3" id="depositForm">
+                        <form method="post" action="/deposit" class="form-container">
+                            <div class="form-group">
+                                <label>Amount:</label>
+                                <input type="number" class="form-control" name="amount" required />
+                            </div>
+                            <button type="submit" class="btn btn-block btn-success"><i class="fas fa-check"></i>Submit</button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
             <div class="col-md-4 mb-4">
                 <div class="action-card form-container">
-                <div class="action-header">
-                    <span class="action-icon"><i class="fas fa-arrow-up"></i></span>
-                    <div class="action-copy">
-                        <h5>Withdraw</h5>
-                        <p>Move money out with a simple secure form.</p>
-                    </div>
-                </div>
-                <button class="btn btn-block btn-primary" type="button" data-toggle="collapse" data-target="#withdrawForm" aria-expanded="false" aria-controls="withdrawForm">
-                    <i class="fas fa-wallet"></i>Withdraw
-                </button>
-                <div class="collapse mt-3" id="withdrawForm">
-                    <form method="post" action="/withdraw" class="form-container">
-                        <div class="form-group">
-                            <label>Amount:</label>
-                            <input type="number" class="form-control" name="amount" required />
+                    <div class="action-header">
+                        <span class="action-icon"><i class="fas fa-arrow-up"></i></span>
+                        <div class="action-copy">
+                            <h5>Withdraw</h5>
+                            <p>Move money out with a simple secure form.</p>
                         </div>
-                        <button type="submit" class="btn btn-block btn-success"><i class="fas fa-check"></i>Submit</button>
-                    </form>
-                </div>
+                    </div>
+                    <button class="btn btn-block btn-primary" type="button" data-toggle="collapse" data-target="#withdrawForm" aria-expanded="false" aria-controls="withdrawForm">
+                        <i class="fas fa-wallet"></i>Withdraw
+                    </button>
+                    <div class="collapse mt-3" id="withdrawForm">
+                        <form method="post" action="/withdraw" class="form-container">
+                            <div class="form-group">
+                                <label>Amount:</label>
+                                <input type="number" class="form-control" name="amount" required />
+                            </div>
+                            <button type="submit" class="btn btn-block btn-success"><i class="fas fa-check"></i>Submit</button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
             <div class="col-md-4 mb-4">
                 <div class="action-card form-container">
-                <div class="action-header">
-                    <span class="action-icon"><i class="fas fa-paper-plane"></i></span>
-                    <div class="action-copy">
-                        <h5>Transfer money</h5>
-                        <p>Send funds to another username quickly.</p>
+                    <div class="action-header">
+                        <span class="action-icon"><i class="fas fa-paper-plane"></i></span>
+                        <div class="action-copy">
+                            <h5>Transfer money</h5>
+                            <p>Send funds to another username quickly.</p>
+                        </div>
                     </div>
-                </div>
-                <button class="btn btn-block btn-primary" type="button" data-toggle="collapse" data-target="#transferForm" aria-expanded="false" aria-controls="transferForm">
-                    <i class="fas fa-exchange-alt"></i>Transfer Money
-                </button>
-                <div class="collapse mt-3" id="transferForm">
-                    <form method="post" action="/transfer" class="form-container">
-                        <div class="form-group">
-                            <label>Recipient Username:</label>
-                            <input type="text" class="form-control" name="toUsername" required />
-                        </div>
-                        <div class="form-group">
-                            <label>Amount:</label>
-                            <input type="number" class="form-control" name="amount" required />
-                        </div>
-                        <button type="submit" class="btn btn-block btn-success"><i class="fas fa-check"></i>Submit</button>
-                    </form>
-                </div>
+                    <button class="btn btn-block btn-primary" type="button" data-toggle="collapse" data-target="#transferForm" aria-expanded="false" aria-controls="transferForm">
+                        <i class="fas fa-exchange-alt"></i>Transfer Money
+                    </button>
+                    <div class="collapse mt-3" id="transferForm">
+                        <form method="post" action="/transfer" class="form-container">
+                            <div class="form-group">
+                                <label>Recipient Username:</label>
+                                <input type="text" class="form-control" name="toUsername" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Amount:</label>
+                                <input type="number" class="form-control" name="amount" required />
+                            </div>
+                            <button type="submit" class="btn btn-block btn-success"><i class="fas fa-check"></i>Submit</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <p th:if="${error != null}" th:text="${error}" class="error text-center mt-3"></p>
+        <p th:if="${error != null}" th:text="${error}" class="text-danger text-center mt-3"></p>
     </div>
 </div>
 
@@ -614,28 +168,5 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    (function () {
-        const key = 'equity-theme';
-        const body = document.body;
-        const button = document.getElementById('themeToggle');
-        const icon = document.getElementById('themeIcon');
-
-        function applyTheme(theme) {
-            body.setAttribute('data-theme', theme);
-            const dark = theme === 'dark';
-            icon.className = dark ? 'fas fa-sun' : 'fas fa-moon';
-            button.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
-            button.title = dark ? 'Light mode' : 'Dark mode';
-        }
-
-        applyTheme(localStorage.getItem(key) || 'light');
-        button.addEventListener('click', function () {
-            const next = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            localStorage.setItem(key, next);
-            applyTheme(next);
-        });
-    }());
-</script>
 </body>
 </html>
