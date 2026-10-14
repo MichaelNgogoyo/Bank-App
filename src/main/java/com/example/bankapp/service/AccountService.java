@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -87,7 +86,7 @@ public class AccountService implements UserDetailsService {
 
 
     public List<Transaction> getTransactionHistory(Account account){
-        return transactionRepository.findAccountById(account.getId());
+        return transactionRepository.findByAccountId(account.getId());
     }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
